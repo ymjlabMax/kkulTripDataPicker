@@ -1,0 +1,101 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.header {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.year-month {
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.nav {
+    display: flex;
+    border: 1px solid #333333;
+    border-radius: 5px;
+}
+
+.nav-btn {
+    border: none;
+    font-size: 1rem;
+    line-height: 2rem;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.days {
+    display: flex;
+    margin: 1rem 0 1rem;
+}
+
+.day {
+    width: calc(100% / 7);
+    text-align: center;
+}
+
+.dates {
+    display: flex;
+    flex-flow: row wrap;
+    /* border-top: 1px solid #333333;
+    border-right: 1px solid #333333; */
+}
+
+.date {
+    width: calc(100% / 7);
+    text-align: center;
+    /* border-bottom: 1px solid #333333;
+    border-left: 1px solid #333333; */
+    cursor: pointer;
+    padding-bottom: 1rem;
+    padding-top: 1rem;
+}
+
+.day:nth-child(7n + 1),
+.date:nth-child(7n + 1) {
+    color: #d13e3e;
+}
+
+.day:nth-child(7n),
+.date:nth-child(7n) {
+    color: #396ee2;
+}
+
+.other {
+    opacity: 0;
+}
+
+.today {
+    position: relative;
+}
+
+.today::before {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: -1;
+    display: block;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    content: "";
+    border: 1px solid #aaa;
+}
+
+.pastday {
+    opacity: 0.3;
+}
