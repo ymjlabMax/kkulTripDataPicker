@@ -122,3 +122,17 @@ body {
     content: "";
     border: 1px solid #ffb127;
 }
+
+.past-dates {
+    display: flex;
+    flex-flow: row wrap;
+    /* border-top: 1px solid #333333;
+    border-right: 1px solid #333333; */
+}
+
+.future-dates {
+    display: flex;
+    flex-flow: row wrap;
+    /* border-top: 1px solid #333333;
+    border-right: 1px solid #333333; */
+}

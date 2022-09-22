@@ -1,11 +1,5 @@
 // 시간 데이터 가져오기
 let date = new Date();
-// 트립시작일
-let startChoiceDay, startChoiceIdx;
-// 트립마지막일
-let lastChoiceDay, lastChoiceIdx;
-// 선택일 카운터
-let choiceCount = 0;
 
 // 달력 그리기
 const renderCalendar = () => {
@@ -133,32 +127,6 @@ const renderCalendar = () => {
             }
         }
     }
-
-    // 선택된 시작날 표시 하기
-    if (startChoiceDay) {
-        let startChoiceDate = startChoiceDay.split("-");
-        if (Number(startChoiceDate[0]) === viewYear && Number(startChoiceDate[1]) === viewMonth + 1) {
-            for (let date of document.querySelectorAll(".this")) {
-                if (+date.innerText === startChoiceIdx) {
-                    date.classList.add("startDt");
-                    break;
-                }
-            }
-        }
-    }
-
-    // 선택된 마지막날 표시 하기
-    if (lastChoiceDay) {
-        let lastChoiceDate = lastChoiceDay.split("-");
-        if (Number(lastChoiceDate[0]) === viewYear && Number(lastChoiceDate[1]) === viewMonth + 1) {
-            for (let date of document.querySelectorAll(".this")) {
-                if (+date.innerText === lastChoiceIdx) {
-                    date.classList.add("startDt");
-                    break;
-                }
-            }
-        }
-    }
 };
 renderCalendar();
 
@@ -180,13 +148,20 @@ const goToday = () => {
     renderCalendar();
 };
 
+// 트립시작일
+let startChoiceDay, startChoiceIdx;
+// 트립마지막일
+let lastChoiceDay, lastChoiceIdx;
+// 선택일 카운터
+let choiceCount = 0;
+
 // 트립일정 선택
 function choiceDay(obj, date) {
     if (startChoiceDay === null || startChoiceDay === undefined) {
         startChoiceDay = obj.dataset.dateinfo;
         choiceCount++;
         startChoiceIdx = date;
-        renderCalendar();
+        startTripLine(date);
     } else if (lastChoiceDay === null || lastChoiceDay === undefined) {
         let startDay = new Date(startChoiceDay);
         startDay.setDate(startDay.getDate() + 30);
@@ -195,16 +170,42 @@ function choiceDay(obj, date) {
             alert("최대 30일 입니다.");
         } else {
             lastChoiceDay = obj.dataset.dateinfo;
+            startTripLine(date);
             choiceCount++;
             lastChoiceIdx = date;
-            renderCalendar();
         }
     } else {
         startChoiceDay = obj.dataset.dateinfo;
+        startTripLine(date);
         startChoiceIdx = date;
         lastChoiceDay = null;
         lastChoiceIdx = null;
         choiceCount = 1;
-        renderCalendar();
+    }
+    console.log("선택된 시작일날짜", startChoiceDay);
+    console.log("선택된 마지막날짜", lastChoiceDay);
+    console.log("선택되고 있는 카운트", choiceCount);
+}
+
+// 선택된 트립 그려주는 함수
+function startTripLine(date) {
+    let startDate = date;
+
+    for (let date of document.querySelectorAll(".this")) {
+        if (+date.innerText === startDate) {
+            date.classList.add("startDt");
+            break;
+        }
+    }
+}
+
+function lastTripLine(date) {
+    let lastDate = date;
+
+    for (let date of document.querySelectorAll(".this")) {
+        if (+date.innerText === lastDate) {
+            date.classList.add("startDt");
+            break;
+        }
     }
 }
