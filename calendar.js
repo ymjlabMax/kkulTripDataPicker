@@ -6,8 +6,6 @@ const renderCalendar = () => {
     const viewYear = date.getFullYear();
     const viewMonth = date.getMonth();
 
-    console.log("지금 월", viewMonth + 1);
-
     // year-month 채우기
     document.querySelector(".year-month").textContent = `${viewMonth + 1}월 ${viewYear}`;
 
@@ -46,16 +44,22 @@ const renderCalendar = () => {
     // Dates 정리
     const firstDateIndex = dates.indexOf(1);
     const lastDateIndex = dates.lastIndexOf(TLDate);
+
+    // 오늘날짜의 인덱스를 정확하게 알기위해 해당월 날짜를 제외한 값은 0으로 변경 한다.
+    for (let i = 0; i < firstDateIndex; i++) {
+        dates[i] = 0;
+    }
+    for (let i = lastDateIndex + 1; i < dates.length; i++) {
+        dates[i] = 0;
+    }
     const todayDateIndex = dates.indexOf(today.getDate());
 
     dates.forEach((date, idx) => {
         // 현재월 조건문
-        console.log("데이터 변화 확인", date);
-
         if (viewMonth === today.getMonth() && viewYear === today.getFullYear()) {
-            let choiceDt = viewYear;
-            choiceDt += viewMonth < 9 ? "0" + (viewMonth + 1) : viewMonth + 1;
-            choiceDt += date < 10 ? "0" + date : date;
+            let choiceDt = String(viewYear);
+            choiceDt += viewMonth < 9 ? "0" + String(viewMonth + 1) : String(viewMonth + 1);
+            choiceDt += date < 10 ? "0" + String(date) : String(date);
 
             if (idx >= firstDateIndex && idx < todayDateIndex) {
                 condition = "pastday";
@@ -65,7 +69,7 @@ const renderCalendar = () => {
                 dates[idx] = `<div class="date"><span class="${condition}">${date}</span></div>`;
             } else {
                 condition = "this";
-                dates[idx] = `<div class="date" data-date="${choiceDt}" onclick="choiceDay(this)"><span class="${condition}">${date}</span></div>`;
+                dates[idx] = `<div class="date" data-dateinfo="${choiceDt}" onclick="choiceDay(this)"><span class="${condition}">${date}</span></div>`;
             }
             return;
         }
@@ -94,16 +98,17 @@ const renderCalendar = () => {
         }
         // 미래 조건문
         if (viewMonth > today.getMonth() || viewYear > today.getFullYear()) {
-            let choiceDt = viewYear;
-            choiceDt += viewMonth < 9 ? "0" + (viewMonth + 1) : viewMonth + 1;
-            choiceDt += date < 10 ? "0" + date : date;
+            console.log("미래해 맞나요?", viewYear);
 
+            let choiceDt = String(viewYear);
+            choiceDt += viewMonth < 9 ? "0" + String(viewMonth + 1) : String(viewMonth + 1);
+            choiceDt += date < 10 ? "0" + String(date) : String(date);
             if (idx < firstDateIndex || idx > lastDateIndex) {
                 condition = "other";
                 dates[idx] = `<div class="date"><span class="${condition}">${date}</span></div>`;
             } else {
                 condition = "this";
-                dates[idx] = `<div class="date" data-date="${choiceDt}" onclick="choiceDay(this)" ><span class="${condition}">${date}</span></div>`;
+                dates[idx] = `<div class="date" data-dateInfo="${choiceDt}" onclick="choiceDay(this)" ><span class="${condition}">${date}</span></div>`;
             }
             return;
         }
@@ -128,7 +133,6 @@ renderCalendar();
 const prevMonth = () => {
     date.setMonth(date.getMonth() - 1);
 
-    console.log("과거 확인", date);
     renderCalendar();
 };
 
@@ -151,25 +155,24 @@ let lastChoiceDay;
 // 선택일 카운터
 let choiceCount = 0;
 
+// 트립일정 선택
 function choiceDay(obj) {
     if (startChoiceDay === null || startChoiceDay === undefined) {
-        startChoiceDay = obj.dataset.date;
+        startChoiceDay = obj.dataset.dateinfo;
+        choiceCount++;
     } else if (lastChoiceDay === null || lastChoiceDay === undefined) {
-        lastChoiceDay = obj.dataset.date;
+        if (Number(startChoiceDay) + Number(30) <= Number(obj.dataset.dateinfo)) {
+            alert("최대 30일 입니다.");
+        } else {
+            lastChoiceDay = obj.dataset.dateinfo;
+            choiceCount++;
+        }
     } else {
-        startChoiceDay = obj.dataset.date;
+        startChoiceDay = obj.dataset.dateinfo;
         lastChoiceDay = null;
+        choiceCount = 1;
     }
-
-    // if (startChoiceDay && lastChoiceDay) {
-    //     if (Number(startChoiceDay) > Number(lastChoiceDay)) {
-    //         startChoiceDay = lastChoiceDay;
-    //         lastChoiceDay = startChoiceDay;
-    //     }
-    // }
-
     console.log("선택된 날짜", startChoiceDay);
     console.log("선택된 마지막날짜", lastChoiceDay);
-
-    // 주석 추가 테스트 
+    console.log("선택되고 있는 카운트", choiceCount);
 }

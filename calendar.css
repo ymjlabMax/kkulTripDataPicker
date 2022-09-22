@@ -12,6 +12,10 @@ body {
     min-height: 100vh;
 }
 
+.calendar {
+    height: 45vh;
+}
+
 .header {
     display: flex;
     justify-content: space-around;
