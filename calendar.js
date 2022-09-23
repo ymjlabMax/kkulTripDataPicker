@@ -161,9 +161,9 @@ const renderCalendar = () => {
                     date.classList.add("range");
                 }
             }
-            return;
         }
     }
+    console.log("시작일", startChoiceDay, "마지막일", lastChoiceDay);
 };
 renderCalendar();
 
@@ -195,21 +195,18 @@ function choiceDay(obj, date) {
     } else if (lastChoiceDay === null || lastChoiceDay === undefined) {
         let startDay = new Date(startChoiceDay);
         let choiceDay = new Date(obj.dataset.dateinfo);
-        let changeStartDay;
-        let changeLastDay;
-
         // 마지막날이 시작일보다 늦을때
         if (startDay > choiceDay) {
-            changeStartDay = choiceDay;
-            changeLastDay = startDay;
-            changeStartDay.setDate(changeStartDay.getDate() + 30);
-            if (changeStartDay.getTime() <= changeLastDay.getTime()) {
+            let formatStartDay = choiceDay;
+            let formatLastDay = startDay;
+            formatStartDay.setDate(formatStartDay.getDate() + 30);
+            if (formatStartDay.getTime() <= formatLastDay.getTime()) {
                 alert("최대 30일 입니다.");
             } else {
-                let formatStartDay = obj.dataset.dateinfo;
-                let formatLastDay = startChoiceDay;
-                startChoiceDay = formatStartDay;
-                lastChoiceDay = formatLastDay;
+                let changeStartDay = obj.dataset.dateinfo;
+                let changeLastDay = startChoiceDay;
+                startChoiceDay = changeStartDay;
+                lastChoiceDay = changeLastDay;
                 choiceCount++;
                 renderCalendar();
                 return;
