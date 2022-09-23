@@ -4,8 +4,6 @@ let date = new Date();
 let startChoiceDay;
 // 트립마지막일
 let lastChoiceDay;
-// 선택일 카운터
-let choiceCount = 0;
 
 // 달력 그리기
 const renderCalendar = () => {
@@ -13,7 +11,7 @@ const renderCalendar = () => {
     const viewMonth = date.getMonth();
 
     // year-month 채우기
-    document.querySelector(".year-month").textContent = `${viewMonth + 1}월 ${viewYear}`;
+    document.querySelector(".year-month").textContent = `${viewYear}년 ${viewMonth + 1}월`;
 
     // 지난 달 마지막 Date, 이번 달 마지막 Date
     const prevLast = new Date(viewYear, viewMonth, 0);
@@ -75,7 +73,9 @@ const renderCalendar = () => {
                 dates[idx] = `<div class="date"><span class="${condition}">${date}</span></div>`;
             } else {
                 condition = "this";
-                dates[idx] = `<div class="date" data-dateinfo="${choiceDt}" onclick="choiceDay(this, ${date})"><span class="${condition}">${date}</span></div>`;
+                dates[
+                    idx
+                ] = `<div class="date" data-dateinfo="${choiceDt}" onclick="choiceDay(this, ${date})"><span data-dateinfo="${choiceDt}" class="${condition}">${date}</span></div>`;
             }
             return;
         }
@@ -92,7 +92,7 @@ const renderCalendar = () => {
                 condition = "this";
                 dates[
                     idx
-                ] = `<div class="date" data-dateInfo="${choiceDt}" onclick="choiceDay(this, ${date})" ><span class="${condition}">${date}</span></div>`;
+                ] = `<div class="date" data-dateInfo="${choiceDt}" onclick="choiceDay(this, ${date})" ><span data-dateinfo="${choiceDt}" class="${condition}">${date}</span></div>`;
             }
             return;
         }
@@ -138,32 +138,36 @@ const renderCalendar = () => {
     if (startChoiceDay) {
         let startChoiceDate = startChoiceDay.split("-");
         if (Number(startChoiceDate[0]) === viewYear && Number(startChoiceDate[1]) === viewMonth + 1) {
-            for (let date of document.querySelectorAll(".this")) {
-                if (+date.innerText === Number(startChoiceDate[2])) {
-                    date.classList.add("startDt");
+            for (let rawdata of document.getElementsByClassName("this")) {
+                console.log(rawdata.getAttribute("data-dateinfo"));
+                if (rawdata.getAttribute("data-dateinfo") === startChoiceDay) {
+                    rawdata.classList.add("startDt");
                     break;
                 }
             }
         }
     }
 
-    // 선택된 마지막날 표시 하기
+    console.log("시작일", startChoiceDay, "마지막일", lastChoiceDay);
+    // 범위 그리기
     if (lastChoiceDay) {
-        let startChoiceDate = startChoiceDay.split("-");
-        let lastChoiceDate = lastChoiceDay.split("-");
-
-        //해당년 && 해당월이 있는 경우
-        if (Number(lastChoiceDate[0]) === viewYear && Number(lastChoiceDate[1]) === viewMonth + 1) {
-            for (let date of document.querySelectorAll(".this")) {
-                if (+date.innerText === Number(lastChoiceDate[2])) {
-                    date.classList.add("startDt");
-                } else if (Number(date.innerText) > Number(startChoiceDate[2]) && Number(date.innerText) < Number(lastChoiceDate[2])) {
-                    date.classList.add("range");
+        for (let rawdata of document.getElementsByClassName("this")) {
+            if (rawdata.getAttribute("data-dateinfo")) {
+                console.log(rawdata.getAttribute("data-dateinfo"));
+                if (rawdata.getAttribute("data-dateinfo") === lastChoiceDay) {
+                    rawdata.classList.add("lastAdd");
+                } else if (rawdata.getAttribute("data-dateinfo") === startChoiceDay) {
+                    rawdata.classList.remove("startDt");
+                    rawdata.classList.add("startAdd");
+                } else if (
+                    new Date(rawdata.getAttribute("data-dateinfo")) > new Date(startChoiceDay) &&
+                    new Date(rawdata.getAttribute("data-dateinfo")) < new Date(lastChoiceDay)
+                ) {
+                    rawdata.classList.add("range");
                 }
             }
         }
     }
-    console.log("시작일", startChoiceDay, "마지막일", lastChoiceDay);
 };
 renderCalendar();
 
@@ -187,15 +191,16 @@ const goToday = () => {
 
 // 트립일정 선택
 function choiceDay(obj, date) {
+    // 선택일자 없을때
     if (startChoiceDay === null || startChoiceDay === undefined) {
         startChoiceDay = obj.dataset.dateinfo;
-        choiceCount++;
         renderCalendar();
         return;
+        // 시작일만 있을때
     } else if (lastChoiceDay === null || lastChoiceDay === undefined) {
         let startDay = new Date(startChoiceDay);
         let choiceDay = new Date(obj.dataset.dateinfo);
-        // 마지막날이 시작일보다 늦을때
+        // 트립을 역순으로 선택 했을때
         if (startDay > choiceDay) {
             let formatStartDay = choiceDay;
             let formatLastDay = startDay;
@@ -207,17 +212,16 @@ function choiceDay(obj, date) {
                 let changeLastDay = startChoiceDay;
                 startChoiceDay = changeStartDay;
                 lastChoiceDay = changeLastDay;
-                choiceCount++;
                 renderCalendar();
                 return;
             }
+            // 트립을 순차적으로 선택 했을때
         } else {
             startDay.setDate(startDay.getDate() + 30);
             if (startDay.getTime() <= choiceDay.getTime()) {
                 alert("최대 30일 입니다.");
             } else {
                 lastChoiceDay = obj.dataset.dateinfo;
-                choiceCount++;
                 renderCalendar();
                 return;
             }
@@ -225,7 +229,6 @@ function choiceDay(obj, date) {
     } else {
         startChoiceDay = obj.dataset.dateinfo;
         lastChoiceDay = null;
-        choiceCount = 1;
         renderCalendar();
         return;
     }
