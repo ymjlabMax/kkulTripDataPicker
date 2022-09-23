@@ -1,9 +1,9 @@
 // 시간 데이터 가져오기
 let date = new Date();
 // 트립시작일
-let startChoiceDay, startChoiceIdx;
+let startChoiceDay;
 // 트립마지막일
-let lastChoiceDay, lastChoiceIdx;
+let lastChoiceDay;
 // 선택일 카운터
 let choiceCount = 0;
 
@@ -139,7 +139,7 @@ const renderCalendar = () => {
         let startChoiceDate = startChoiceDay.split("-");
         if (Number(startChoiceDate[0]) === viewYear && Number(startChoiceDate[1]) === viewMonth + 1) {
             for (let date of document.querySelectorAll(".this")) {
-                if (+date.innerText === startChoiceIdx) {
+                if (+date.innerText === Number(startChoiceDate[2])) {
                     date.classList.add("startDt");
                     break;
                 }
@@ -149,14 +149,19 @@ const renderCalendar = () => {
 
     // 선택된 마지막날 표시 하기
     if (lastChoiceDay) {
+        let startChoiceDate = startChoiceDay.split("-");
         let lastChoiceDate = lastChoiceDay.split("-");
+
+        //해당년 && 해당월이 있는 경우
         if (Number(lastChoiceDate[0]) === viewYear && Number(lastChoiceDate[1]) === viewMonth + 1) {
             for (let date of document.querySelectorAll(".this")) {
-                if (+date.innerText === lastChoiceIdx) {
+                if (+date.innerText === Number(lastChoiceDate[2])) {
                     date.classList.add("startDt");
-                    break;
+                } else if (Number(date.innerText) > Number(startChoiceDate[2]) && Number(date.innerText) < Number(lastChoiceDate[2])) {
+                    date.classList.add("range");
                 }
             }
+            return;
         }
     }
 };
@@ -185,26 +190,46 @@ function choiceDay(obj, date) {
     if (startChoiceDay === null || startChoiceDay === undefined) {
         startChoiceDay = obj.dataset.dateinfo;
         choiceCount++;
-        startChoiceIdx = date;
         renderCalendar();
+        return;
     } else if (lastChoiceDay === null || lastChoiceDay === undefined) {
         let startDay = new Date(startChoiceDay);
-        startDay.setDate(startDay.getDate() + 30);
         let choiceDay = new Date(obj.dataset.dateinfo);
-        if (startDay.getTime() <= choiceDay.getTime()) {
-            alert("최대 30일 입니다.");
+        let changeStartDay;
+        let changeLastDay;
+
+        // 마지막날이 시작일보다 늦을때
+        if (startDay > choiceDay) {
+            changeStartDay = choiceDay;
+            changeLastDay = startDay;
+            changeStartDay.setDate(changeStartDay.getDate() + 30);
+            if (changeStartDay.getTime() <= changeLastDay.getTime()) {
+                alert("최대 30일 입니다.");
+            } else {
+                let formatStartDay = obj.dataset.dateinfo;
+                let formatLastDay = startChoiceDay;
+                startChoiceDay = formatStartDay;
+                lastChoiceDay = formatLastDay;
+                choiceCount++;
+                renderCalendar();
+                return;
+            }
         } else {
-            lastChoiceDay = obj.dataset.dateinfo;
-            choiceCount++;
-            lastChoiceIdx = date;
-            renderCalendar();
+            startDay.setDate(startDay.getDate() + 30);
+            if (startDay.getTime() <= choiceDay.getTime()) {
+                alert("최대 30일 입니다.");
+            } else {
+                lastChoiceDay = obj.dataset.dateinfo;
+                choiceCount++;
+                renderCalendar();
+                return;
+            }
         }
     } else {
         startChoiceDay = obj.dataset.dateinfo;
-        startChoiceIdx = date;
         lastChoiceDay = null;
-        lastChoiceIdx = null;
         choiceCount = 1;
         renderCalendar();
+        return;
     }
 }
