@@ -36,11 +36,12 @@ body {
     line-height: 2rem;
     background-color: transparent;
     cursor: pointer;
+    padding: 0 1rem 0 1rem;
 }
 
 .days {
     display: flex;
-    margin: 1rem 0 1rem;
+    margin-top: 1rem;
 }
 
 .day {
@@ -57,12 +58,12 @@ body {
 
 .date {
     width: calc(100% / 7);
-    text-align: center;
+    /* text-align: center; */
     /* border-bottom: 1px solid #333333;
     border-left: 1px solid #333333; */
     cursor: pointer;
-    padding-bottom: 1rem;
-    padding-top: 1rem;
+    padding-bottom: calc(100% / 7);
+    position: relative;
 }
 
 .day:nth-child(7n + 1),
@@ -77,6 +78,15 @@ body {
 
 .other {
     opacity: 0;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+    width: 30%;
+    height: 30%;
+    text-align: center;
 }
 
 .today {
@@ -85,7 +95,7 @@ body {
 
 .today::before {
     position: absolute;
-    top: 40%;
+    top: 50%;
     left: 50%;
     z-index: -1;
     display: block;
@@ -94,11 +104,20 @@ body {
     border-radius: 50%;
     transform: translate(-50%, -50%);
     content: "";
-    border: 1px solid #aaa;
+    border: 2px solid #aaa;
 }
 
 .pastday {
     opacity: 0.3;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+    width: 30%;
+    height: 30%;
+    text-align: center;
 }
 
 .startDt {
@@ -107,13 +126,13 @@ body {
 
 .startDt::before {
     position: absolute;
-    top: 40%;
+    top: 50%;
     left: 50%;
     z-index: -2;
     display: block;
     background-color: #ffb127;
-    width: 3rem;
-    height: 3rem;
+    width: 100%;
+    height: 100%;
     border-radius: 50%;
     transform: translate(-50%, -50%);
     content: "";
@@ -126,13 +145,13 @@ body {
 
 .range::before {
     position: absolute;
-    top: 40%;
+    top: 50%;
     left: 50%;
     z-index: -2;
     display: block;
     background-color: #ffb127;
-    width: 6rem;
-    height: 3rem;
+    width: 100%;
+    height: 100%;
     transform: translate(-50%, -50%);
     content: "";
     border: 1px solid #ffb127;
@@ -144,15 +163,15 @@ body {
 
 .startAdd::before {
     position: absolute;
-    top: 40%;
-    left: 26%;
+    top: 50%;
+    left: 50%;
     z-index: -1;
     display: block;
     background-color: #ffb127;
     border-radius: 50% 0 0 50%;
-    width: 3rem;
-    height: 3rem;
-    transform: translate(-40%, -50%);
+    width: 100%;
+    height: 100%;
+    transform: translate(-50%, -50%);
     content: "";
     border: 1px solid #ffb127;
 }
@@ -163,15 +182,15 @@ body {
 
 .lastAdd::before {
     position: absolute;
-    top: 40%;
-    left: 0%;
+    top: 50%;
+    left: 50%;
     z-index: -1;
     display: block;
     background-color: #ffb127;
     border-radius: 0 50% 50% 0;
-    width: 3rem;
-    height: 3rem;
-    transform: translate(-40%, -50%);
+    width: 100%;
+    height: 100%;
+    transform: translate(-50%, -50%);
     content: "";
     border: 1px solid #ffb127;
 }
@@ -193,4 +212,16 @@ body {
     transform: translate(-50%, -50%);
     content: "";
     border: 1px solid #ffb127;
+}
+
+.this {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+    width: 30%;
+    height: 30%;
+    text-align: center;
 }
