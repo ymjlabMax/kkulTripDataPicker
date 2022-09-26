@@ -6,10 +6,10 @@ let startChoiceDay;
 let lastChoiceDay;
 
 // 정해진 시작일 트립 배열
-let tripStartDtArr = ["2022-09-28", "2022-10-09"];
+let tripStartDtArr = ["2022-09-28", "2022-10-09", "2022-10-25"];
 
 // 정해진 마지막날 트립 배열
-let tripEndDtArr = ["2022-09-29", "2022-10-15"];
+let tripEndDtArr = ["2022-09-29", "2022-10-15", "2022-10-30"];
 
 // 달력 그리기
 const renderCalendar = () => {
@@ -189,17 +189,15 @@ const renderCalendar = () => {
     //         }
     //     }
     // }
+
+    //트립 중복일자 체크
     for (let i = 0; i < tripStartDtArr.length; i++) {
-        for (let selectedDate of document.getElementsByClassName("this")) {
-            console.log("##############################333");
-            console.log("반복되는 날짜", new Date(selectedDate.getAttribute("data-dateinfo")));
-            console.log("시작일", new Date(tripStartDtArr[i]));
-            console.log("마지막일", new Date(tripEndDtArr[i]));
-            console.log("조건문", new Date(selectedDate.getAttribute("data-dateinfo")) >= new Date(tripStartDtArr[i])햐);
-            console.log("##############################333");
-            if (new Date(selectedDate.getAttribute("data-dateinfo")) >= new Date(tripStartDtArr[i])) {
-                selectedDate.classList.remove("this");
-                selectedDate.classList.add("pastday");
+        for (let selectedDate of document.getElementsByClassName("date")) {
+            if (
+                new Date(selectedDate.getAttribute("data-dateinfo")) >= new Date(tripStartDtArr[i]) &&
+                new Date(selectedDate.getAttribute("data-dateinfo")) <= new Date(tripEndDtArr[i])
+            ) {
+                selectedDate.classList.add("selectedDay");
             }
         }
     }
@@ -226,8 +224,6 @@ const goToday = () => {
 
 // 트립일정 선택
 function choiceDay(obj, date) {
-    // 트립 중복일자 체크
-
     // 선택일자 없을때
     if (startChoiceDay === null || startChoiceDay === undefined) {
         startChoiceDay = obj.dataset.dateinfo;
@@ -249,6 +245,12 @@ function choiceDay(obj, date) {
                 let changeLastDay = startChoiceDay;
                 startChoiceDay = changeStartDay;
                 lastChoiceDay = changeLastDay;
+                for (let i = 0; i < tripStartDtArr.length; i++) {
+                    if (new Date(startChoiceDay) <= new Date(tripStartDtArr[i]) && new Date(lastChoiceDay) >= new Date(tripEndDtArr[i])) {
+                        alert("중복된 일정 입니다.");
+                        return;
+                    }
+                }
                 renderCalendar();
                 return;
             }
@@ -259,15 +261,36 @@ function choiceDay(obj, date) {
                 alert("최대 30일 입니다.");
             } else {
                 lastChoiceDay = obj.dataset.dateinfo;
+                for (let i = 0; i < tripStartDtArr.length; i++) {
+                    if (new Date(startChoiceDay) <= new Date(tripStartDtArr[i]) && new Date(lastChoiceDay) >= new Date(tripEndDtArr[i])) {
+                        alert("중복된 일정 입니다.");
+                        return;
+                    }
+                }
                 renderCalendar();
                 return;
             }
         }
+
         // 트립을 다시 선택했을때
     } else {
         startChoiceDay = obj.dataset.dateinfo;
         lastChoiceDay = null;
         renderCalendar();
         return;
+    }
+}
+
+//중복 체크 함수
+function checkedTripDate(startDay, choiceDay) {
+    for (let i = 0; i < tripStartDtArr.length; i++) {
+        console.log("선택된 첫번째 날", new Date(startDay));
+        console.log("선택된 마지막날", new Date(choiceDay));
+        console.log("일정 잡힌 첫번째 날", new Date(tripStartDtArr[i]));
+        console.log("일정 잡힌 마지막날", new Date(tripEndDtArr[i]));
+        console.log("조건문", new Date(startDay) <= new Date(tripStartDtArr[i]) && new Date(choiceDay) >= new Date(tripEndDtArr[i]));
+        if (new Date(startDay) >= new Date(tripStartDtArr[i]) && new Date(choiceDay) <= new Date(tripEndDtArr[i])) {
+            return false;
+        }
     }
 }

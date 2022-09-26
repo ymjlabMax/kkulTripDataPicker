@@ -225,3 +225,7 @@ body {
     height: 30%;
     text-align: center;
 }
+
+.selectedDay {
+    opacity :0.3;
+}
