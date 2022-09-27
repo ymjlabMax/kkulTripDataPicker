@@ -130,13 +130,13 @@ body {
     left: 50%;
     z-index: -2;
     display: block;
-    background-color: #ffb127;
+    background-color: #fcda26;
     width: 100%;
     height: 100%;
     border-radius: 50%;
     transform: translate(-50%, -50%);
     content: "";
-    border: 1px solid #ffb127;
+    border: 1px solid #fcda26;
 }
 
 .range {
@@ -149,12 +149,12 @@ body {
     left: 50%;
     z-index: -2;
     display: block;
-    background-color: #ffb127;
+    background-color: #fcda26;
     width: 100%;
     height: 100%;
     transform: translate(-50%, -50%);
     content: "";
-    border: 1px solid #ffb127;
+    border: 1px solid #fcda26;
 }
 
 .startAdd {
@@ -167,13 +167,13 @@ body {
     left: 50%;
     z-index: -1;
     display: block;
-    background-color: #ffb127;
+    background-color: #fcda26;
     border-radius: 50% 0 0 50%;
     width: 100%;
     height: 100%;
     transform: translate(-50%, -50%);
     content: "";
-    border: 1px solid #ffb127;
+    border: 1px solid #fcda26;
 }
 
 .lastAdd {
@@ -186,13 +186,13 @@ body {
     left: 50%;
     z-index: -1;
     display: block;
-    background-color: #ffb127;
+    background-color: #fcda26;
     border-radius: 0 50% 50% 0;
     width: 100%;
     height: 100%;
     transform: translate(-50%, -50%);
     content: "";
-    border: 1px solid #ffb127;
+    border: 1px solid #fcda26;
 }
 
 .lastDt {
@@ -211,7 +211,7 @@ body {
     border-radius: 50%;
     transform: translate(-50%, -50%);
     content: "";
-    border: 1px solid #ffb127;
+    border: 1px solid #fcda26;
 }
 
 .this {
