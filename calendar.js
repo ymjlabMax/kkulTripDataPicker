@@ -4,23 +4,40 @@ let date = new Date();
 let startChoiceDt;
 // 트립마지막일
 let endChoiceDt;
-
 // 이미 선택된 트립들
-let json;
+let getTripInfoArr;
+
+// 수정요청 트립 시작하는 날짜
+let tripUdtStartDt;
+// 수정요청 트립 마지막 날짜
+let tripUdtEndDt;
 
 // 이미 선택된 트립 가져오기
 function getMsg(data) {
     try {
-        json = JSON.parse(data);
-        // alert(json.length);
+        getTripInfoArr = JSON.parse(data);
     } catch (err) {
         return err.message;
     }
 }
 
+// 테스트용 데이터
 getMsg(
-    '[{"trip_end_dt":"2022-10-03","trip_start_dt":"2022-10-01"}, {"trip_end_dt":"2022-10-09","trip_start_dt":"2022-10-07"}, {"trip_end_dt":"2022-10-11","trip_start_dt":"2022-10-11"}, {"trip_end_dt":"2022-10-24","trip_start_dt":"2022-10-22"}]'
+    '[{"trip_end_dt":"2022-10-03","trip_start_dt":"2022-10-02"}, {"trip_end_dt":"2022-10-09","trip_start_dt":"2022-10-07"}, {"trip_end_dt":"2022-10-11","trip_start_dt":"2022-10-11"}, {"trip_end_dt":"2022-10-24","trip_start_dt":"2022-10-22"}]'
 );
+
+// 트립수정하기
+function tripUdt(data) {
+    try {
+        let tripUdtArr = JSON.parse(data);
+        tripUdtStartDt = tripUdtArr[0].trip_start_dt;
+        tripUdtEndDt = tripUdtArr[0].trip_end_dt;
+    } catch (err) {
+        return err.message;
+    }
+}
+// 트립 수정하기 실행 되었을때
+tripUdt('[{"trip_start_dt":"2022-10-25", "trip_end_dt":"2022-10-28"}]');
 
 // 달력 그리기
 const renderCalendar = () => {
@@ -40,7 +57,7 @@ const renderCalendar = () => {
     const TLDate = thisLast.getDate();
     const TLDay = thisLast.getDay();
 
-    // Dates 기본 배열들
+    // 달력 기본 배열들
     const prevDates = [];
     const thisDates = [...Array(TLDate + 1).keys()].slice(1);
     const nextDates = [];
@@ -86,7 +103,7 @@ const renderCalendar = () => {
                 dates[idx] = `<div class="date other">${date}</div>`;
             } else {
                 condition = "this";
-                dates[idx] = `<div class="date this" data-dateinfo="${choiceDt}" onclick="choiceDay(this, ${date})">${date}</div>`;
+                dates[idx] = `<div class="date this" data-dateinfo="${choiceDt}" onclick="selectChoiceDay(this)">${date}</div>`;
             }
             return;
         }
@@ -99,7 +116,7 @@ const renderCalendar = () => {
             if (idx < firstDateIndex || idx > lastDateIndex) {
                 dates[idx] = `<div class="date other">${date}</div>`;
             } else {
-                dates[idx] = `<div class="date this" data-dateInfo="${choiceDt}" onclick="choiceDay(this, ${date})" >${date}</div>`;
+                dates[idx] = `<div class="date this" data-dateInfo="${choiceDt}" onclick="selectChoiceDay(this)" >${date}</div>`;
             }
             return;
         }
@@ -136,51 +153,77 @@ const renderCalendar = () => {
             }
         }
     }
-    // 선택된 시작날 표시 하기
-    if (startChoiceDt) {
-        let startChoiceDate = startChoiceDt.split("-");
-        if (Number(startChoiceDate[0]) === viewYear && Number(startChoiceDate[1]) === viewMonth + 1) {
-            for (let rawdata of document.getElementsByClassName("date")) {
-                if (rawdata.getAttribute("data-dateinfo") === startChoiceDt) {
-                    rawdata.classList.add("startDt");
-                    break;
+
+    //트립 일정 정하기
+    if (tripUdtStartDt === null || tripUdtStartDt === undefined) {
+        if (startChoiceDt) {
+            let startChoiceDate = startChoiceDt.split("-");
+            if (Number(startChoiceDate[0]) === viewYear && Number(startChoiceDate[1]) === viewMonth + 1) {
+                for (let rawdata of document.getElementsByClassName("date")) {
+                    if (rawdata.getAttribute("data-dateinfo") === startChoiceDt) {
+                        rawdata.classList.add("startDt");
+                        break;
+                    }
                 }
             }
         }
-    }
-
-    // 마지막날이 선택되면 range 그리기
-    if (endChoiceDt) {
+        // 마지막날이 선택되면 range 그리기
+        if (endChoiceDt) {
+            for (let rawdata of document.getElementsByClassName("date")) {
+                if (rawdata.getAttribute("data-dateinfo")) {
+                    // 시작일과 마지막일이 같을때 (1박 여행)
+                    if (rawdata.getAttribute("data-dateinfo") === startChoiceDt && rawdata.getAttribute("data-dateinfo") === endChoiceDt) {
+                        rawdata.classList.add("startDt");
+                        break;
+                    }
+                    if (rawdata.getAttribute("data-dateinfo") === endChoiceDt) {
+                        rawdata.classList.add("lastAdd");
+                    } else if (rawdata.getAttribute("data-dateinfo") === startChoiceDt) {
+                        rawdata.classList.remove("startDt");
+                        rawdata.classList.add("startAdd");
+                    } else if (
+                        new Date(rawdata.getAttribute("data-dateinfo")) > new Date(startChoiceDt) &&
+                        new Date(rawdata.getAttribute("data-dateinfo")) < new Date(endChoiceDt)
+                    ) {
+                        rawdata.classList.add("range");
+                    }
+                }
+            }
+        }
+    } else if (tripUdtEndDt && tripUdtStartDt) {
         for (let rawdata of document.getElementsByClassName("date")) {
             if (rawdata.getAttribute("data-dateinfo")) {
-                // 시작일과 마지막일이 같을때 (1박 여행)
-                if (rawdata.getAttribute("data-dateinfo") === startChoiceDt && rawdata.getAttribute("data-dateinfo") === endChoiceDt) {
-                    rawdata.classList.add("startDt");
-                    break;
-                }
-                if (rawdata.getAttribute("data-dateinfo") === endChoiceDt) {
-                    rawdata.classList.add("lastAdd");
-                } else if (rawdata.getAttribute("data-dateinfo") === startChoiceDt) {
-                    rawdata.classList.remove("startDt");
-                    rawdata.classList.add("startAdd");
-                } else if (
-                    new Date(rawdata.getAttribute("data-dateinfo")) > new Date(startChoiceDt) &&
-                    new Date(rawdata.getAttribute("data-dateinfo")) < new Date(endChoiceDt)
-                ) {
-                    rawdata.classList.add("range");
+                // 하루일정 일때
+                if (tripUdtStartDt === tripUdtEndDt) {
+                    if (rawdata.getAttribute("data-dateinfo") === tripUdtStartDt) {
+                        rawdata.classList.add("startDt");
+                    }
+                } else {
+                    if (rawdata.getAttribute("data-dateinfo") === tripUdtStartDt) {
+                        rawdata.classList.add("startAdd");
+                    } else if (rawdata.getAttribute("data-dateinfo") === tripUdtEndDt) {
+                        rawdata.classList.add("lastAdd");
+                    } else if (
+                        new Date(rawdata.getAttribute("data-dateinfo")) > new Date(tripUdtStartDt) &&
+                        new Date(rawdata.getAttribute("data-dateinfo")) < new Date(tripUdtEndDt)
+                    ) {
+                        rawdata.classList.add("range");
+                    }
                 }
             }
         }
     }
 
-    console.log("시작일", startChoiceDt, "마지막일", endChoiceDt);
+    // 수정하기 일때
+
+    console.log("시작일", startChoiceDt, "마지막일", endChoiceDt, "수정시작일", tripUdtStartDt, "수정 마지막일", tripUdtEndDt);
 
     //트립 중복일자 체크
-    for (let i = 0; i < json.length; i++) {
+    for (let i = 0; i < getTripInfoArr.length; i++) {
         for (let selectedDate of document.getElementsByClassName("date")) {
             if (
-                new Date(selectedDate.getAttribute("data-dateinfo")) >= new Date(json[i].trip_start_dt) &&
-                new Date(selectedDate.getAttribute("data-dateinfo")) <= new Date(json[i].trip_end_dt)
+                new Date(selectedDate.getAttribute("data-dateinfo")) >= new Date(getTripInfoArr[i].trip_start_dt) &&
+                new Date(selectedDate.getAttribute("data-dateinfo")) <= new Date(getTripInfoArr[i].trip_end_dt)
             ) {
                 selectedDate.onclick = null;
                 selectedDate.classList.add("selectedDay");
@@ -208,8 +251,33 @@ const goToday = () => {
     renderCalendar();
 };
 
-// 트립일정 선택
-function choiceDay(obj, date) {
+// 날짜 선택 또는 수정하기 함수
+function selectChoiceDay(obj) {
+    if (tripUdtStartDt === null || tripUdtStartDt === undefined) {
+        choiceDay(obj);
+    } else {
+        udtChoiceDay(obj);
+    }
+}
+
+// 수정 트립일정 선택
+function udtChoiceDay(obj) {
+    let formatUdstStartDay = new Date(tripUdtStartDt);
+    let formatUdtEndDay = new Date(obj.dataset.dateinfo);
+    formatUdstStartDay.setDate(formatUdstStartDay.getDate() + 30);
+    if (new Date(tripUdtStartDt) > new Date(obj.dataset.dateinfo)) {
+        alert("시작일은 수정 불가 입니다.");
+    } else if (formatUdstStartDay.getTime() <= formatUdtEndDay.getTime()) {
+        alert("최대 30일 입니다.");
+    } else {
+        tripUdtEndDt = obj.dataset.dateinfo;
+        renderCalendar();
+        return;
+    }
+}
+
+// 기본 트립일정 선택
+function choiceDay(obj) {
     // 선택일자 없을때
     if (startChoiceDt === null || startChoiceDt === undefined) {
         startChoiceDt = obj.dataset.dateinfo;
@@ -218,10 +286,10 @@ function choiceDay(obj, date) {
         // 시작일만 있을때
     } else if (endChoiceDt === null || endChoiceDt === undefined) {
         let startDay = new Date(startChoiceDt);
-        let choiceDay = new Date(obj.dataset.dateinfo);
+        let selectEndDay = new Date(obj.dataset.dateinfo);
         // 트립을 역순으로 선택 했을때
-        if (startDay > choiceDay) {
-            let formatStartDay = choiceDay;
+        if (startDay > selectEndDay) {
+            let formatStartDay = selectEndDay;
             let formatLastDay = startDay;
             formatStartDay.setDate(formatStartDay.getDate() + 30);
             if (formatStartDay.getTime() <= formatLastDay.getTime()) {
@@ -233,8 +301,11 @@ function choiceDay(obj, date) {
                 let changeLastDay = startChoiceDt;
                 startChoiceDt = changeStartDay;
                 endChoiceDt = changeLastDay;
-                for (let i = 0; i < json.length; i++) {
-                    if (new Date(startChoiceDt) <= new Date(json[i].trip_start_dt) && new Date(endChoiceDt) >= new Date(json[i].trip_end_dt)) {
+                for (let i = 0; i < getTripInfoArr.length; i++) {
+                    if (
+                        new Date(startChoiceDt) <= new Date(getTripInfoArr[i].trip_start_dt) &&
+                        new Date(endChoiceDt) >= new Date(getTripInfoArr[i].trip_end_dt)
+                    ) {
                         endChoiceDt = null;
                         startChoiceDt = null;
                         alert("중복된 일정 입니다.");
@@ -246,14 +317,17 @@ function choiceDay(obj, date) {
             // 트립을 순차적으로 선택 했을때
         } else {
             startDay.setDate(startDay.getDate() + 30);
-            if (startDay.getTime() <= choiceDay.getTime()) {
+            if (startDay.getTime() <= selectEndDay.getTime()) {
                 startChoiceDt = null;
                 endChoiceDt = null;
                 alert("최대 30일 입니다.");
             } else {
                 endChoiceDt = obj.dataset.dateinfo;
-                for (let i = 0; i < json.length; i++) {
-                    if (new Date(startChoiceDt) <= new Date(json[i].trip_start_dt) && new Date(endChoiceDt) >= new Date(json[i].trip_end_dt)) {
+                for (let i = 0; i < getTripInfoArr.length; i++) {
+                    if (
+                        new Date(startChoiceDt) <= new Date(getTripInfoArr[i].trip_start_dt) &&
+                        new Date(endChoiceDt) >= new Date(getTripInfoArr[i].trip_end_dt)
+                    ) {
                         endChoiceDt = null;
                         startChoiceDt = null;
                         alert("중복된 일정 입니다.");
