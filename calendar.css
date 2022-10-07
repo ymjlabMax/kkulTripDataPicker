@@ -26,7 +26,7 @@ body {
 
 .nav {
     display: flex;
-    border: 1px solid #333333;
+    border: 0.5px solid #333333;
     border-radius: 5px;
 }
 
@@ -88,14 +88,14 @@ body {
     position: absolute;
     top: 50%;
     left: 50%;
-    z-index: -2;
+    z-index: 1;
     display: block;
     width: 100%;
     height: 100%;
     border-radius: 50%;
     transform: translate(-50%, -50%);
     content: "";
-    border: 1px solid #aaa;
+    border: 0.5px solid #aaa;
 }
 
 .pastday {
@@ -119,7 +119,7 @@ body {
     border-radius: 50%;
     transform: translate(-50%, -50%);
     content: "";
-    border: 1px solid #fcda26;
+    border: 0.5px solid #fcda26;
 }
 
 .range {
@@ -137,7 +137,8 @@ body {
     height: 100%;
     transform: translate(-50%, -50%);
     content: "";
-    border: 1px solid #fcda26;
+    border: 0.5px solid #fcda26;
+    border-radius: 0%;
 }
 
 .startAdd {
@@ -156,7 +157,7 @@ body {
     height: 100%;
     transform: translate(-50%, -50%);
     content: "";
-    border: 1px solid #fcda26;
+    border: 0.5px solid #fcda26;
 }
 
 .lastAdd {
@@ -175,7 +176,7 @@ body {
     height: 100%;
     transform: translate(-50%, -50%);
     content: "";
-    border: 1px solid #fcda26;
+    border: 0.5px solid #fcda26;
 }
 
 .lastDt {
@@ -194,7 +195,7 @@ body {
     border-radius: 50%;
     transform: translate(-50%, -50%);
     content: "";
-    border: 1px solid #fcda26;
+    border: 0.5px solid #fcda26;
 }
 
 .this {
