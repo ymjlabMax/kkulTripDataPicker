@@ -13,12 +13,13 @@ let udtTripInfoArr;
 function getMsg(data) {
     try {
         getTripInfoArr = JSON.parse(data);
+        renderCalendar();
     } catch (err) {
         return err.message;
     }
 }
 
-getMsg('[{"trip_start_dt":"2022-10-30","trip_end_dt":"2022-11-01"}]');
+getMsg('[{"trip_start_dt":"2022-10-17","trip_end_dt":"2022-10-19"}, {"trip_start_dt":"2022-11-05","trip_end_dt":"2022-11-09"}]');
 
 //트립수정하기;
 function tripUdt(data) {
@@ -26,12 +27,15 @@ function tripUdt(data) {
         udtTripInfoArr = JSON.parse(data);
         startChoiceDt = udtTripInfoArr[0].trip_start_dt;
         endChoiceDt = udtTripInfoArr[0].trip_end_dt;
+
+        renderCalendar();
     } catch (err) {
         return err.message;
     }
 }
 // 트립 수정하기 실행 되었을때
-tripUdt('[{"trip_start_dt":"2022-10-05","trip_end_dt":"2022-10-08"}]');
+//
+// tripUdt('[{"trip_start_dt":"2022-10-27","trip_end_dt":"2022-10-31"}]');
 
 // 달력 그리기
 const renderCalendar = () => {
@@ -218,9 +222,7 @@ const renderCalendar = () => {
     console.log("시작일", startChoiceDt, "마지막일", endChoiceDt);
 
     //트립 중복일자 체크
-    if (getTripInfoArr === undefined || getTripInfoArr === null) {
-        return;
-    } else if (getTripInfoArr !== undefined || getTripInfoArr !== null) {
+    if (getTripInfoArr) {
         for (let i = 0; i < getTripInfoArr.length; i++) {
             for (let selectedDate of document.getElementsByClassName("date")) {
                 if (
@@ -266,24 +268,34 @@ const goToday = () => {
 
 // 날짜 선택 또는 수정하기 함수
 function selectChoiceDay(obj) {
+    let udtToday = new Date();
     if (udtTripInfoArr === undefined || udtTripInfoArr === null) {
         choiceDay(obj);
-    } else {
-        udtChoiceDay(obj);
+        return;
+    } else if (udtTripInfoArr) {
+        if (new Date(startChoiceDt) <= udtToday) {
+            udtChoiceDay_1(obj);
+            return;
+        } else {
+            udtChoiceDay_2(obj);
+            return;
+        }
     }
 }
 
 // 수정 트립일정 선택
-function udtChoiceDay(obj) {
+function udtChoiceDay_1(obj) {
     let formatUdstStartDay = new Date(startChoiceDt);
     let formatUdtEndDay = new Date(obj.dataset.dateinfo);
     formatUdstStartDay.setDate(formatUdstStartDay.getDate() + 30);
 
     if (getTripInfoArr === undefined || getTripInfoArr === null) {
         if (new Date(startChoiceDt) > new Date(obj.dataset.dateinfo)) {
-            alert("시작일은 수정 불가 입니다.");
+            alert("이미 시작된 트립은 시작일은 수정 불가 입니다.");
+            return;
         } else if (formatUdstStartDay.getTime() <= formatUdtEndDay.getTime()) {
             alert("최대 30일 입니다.");
+            return;
         } else {
             endChoiceDt = obj.dataset.dateinfo;
             renderCalendar();
@@ -293,6 +305,7 @@ function udtChoiceDay(obj) {
         for (let i = 0; i < getTripInfoArr.length; i++) {
             if (new Date(startChoiceDt) <= new Date(getTripInfoArr[i].trip_start_dt) && formatUdtEndDay >= new Date(getTripInfoArr[i].trip_end_dt)) {
                 alert("중복된 일정 입니다.");
+                return;
             } else {
                 if (new Date(startChoiceDt) > new Date(obj.dataset.dateinfo)) {
                     alert("시작일은 수정 불가 입니다.");
@@ -305,6 +318,65 @@ function udtChoiceDay(obj) {
                 }
             }
         }
+    }
+}
+
+function udtChoiceDay_2(obj) {
+    // 마직막 일자와 첫번째 일자가 순서가 뒤바뀌는지 알아야함
+    // 뒤바뀌면 변경 해주자 .
+    // 중복일자 체크해야함
+
+    // 선택한 일자가 첫번째 일자보다 앞서 있는지 확인 한다.
+
+    let strDt = startChoiceDt;
+    let endDt = endChoiceDt;
+
+    // 역순으로 선택했을때
+    if (new Date(startChoiceDt) > new Date(obj.dataset.dateinfo)) {
+        console.log("역순으로 선택했을때 ");
+        let formatStrDt = new Date(obj.dataset.dateinfo);
+        let formatendDt = new Date(endChoiceDt);
+        formatStrDt.setDate(formatStrDt.getDate() + 30);
+        if (formatStrDt.getTime() <= formatendDt.getTime()) {
+            alert("최대 30일 입니다.");
+        } else if (getTripInfoArr) {
+            for (let i = 0; i < getTripInfoArr.length; i++) {
+                if (
+                    new Date(obj.dataset.dateinfo) <= new Date(getTripInfoArr[i].trip_start_dt) &&
+                    new Date(endChoiceDt) >= new Date(getTripInfoArr[i].trip_end_dt)
+                ) {
+                    alert("중복된 일정 입니다.");
+                    return;
+                }
+            }
+        }
+        startChoiceDt = obj.dataset.dateinfo;
+        endChoiceDt = endDt;
+        renderCalendar();
+        return;
+    } else {
+        // 순서대로 선택했을때
+        console.log("정상적으로 수정");
+        let formatStrDt_1 = new Date(startChoiceDt);
+        let formatendDt_2 = new Date(obj.dataset.dateinfo);
+        formatStrDt_1.setDate(formatStrDt_1.getDate() + 30);
+        if (formatStrDt_1.getTime() <= formatendDt_2.getTime()) {
+            alert("30일 이내 입니다.");
+            return;
+        } else if (getTripInfoArr) {
+            for (let i = 0; i < getTripInfoArr.length; i++) {
+                if (
+                    new Date(startChoiceDt) <= new Date(getTripInfoArr[i].trip_start_dt) &&
+                    new Date(obj.dataset.dateinfo) >= new Date(getTripInfoArr[i].trip_end_dt)
+                ) {
+                    alert("중복된 일정 입니다.");
+                    return;
+                }
+            }
+        }
+        endChoiceDt = obj.dataset.dateinfo;
+        renderCalendar();
+        return;
     }
 }
 
@@ -328,6 +400,7 @@ function choiceDay(obj) {
                 startChoiceDt = null;
                 endChoiceDt = null;
                 alert("최대 30일 입니다.");
+                return;
             } else {
                 let changeStartDay = obj.dataset.dateinfo;
                 let changeLastDay = startChoiceDt;
@@ -358,6 +431,7 @@ function choiceDay(obj) {
                 startChoiceDt = null;
                 endChoiceDt = null;
                 alert("최대 30일 입니다.");
+                return;
             } else {
                 endChoiceDt = obj.dataset.dateinfo;
                 if (getTripInfoArr === null || getTripInfoArr === undefined) {
@@ -372,6 +446,7 @@ function choiceDay(obj) {
                             endChoiceDt = null;
                             startChoiceDt = null;
                             alert("중복된 일정 입니다.");
+                            return;
                         }
                     }
                 }
