@@ -19,15 +19,16 @@ function getMsg(data) {
     }
 }
 
-getMsg('[{"trip_start_dt":"2022-10-17","trip_end_dt":"2022-10-19"}, {"trip_start_dt":"2022-11-05","trip_end_dt":"2022-11-09"}]');
+getMsg('[{"trip_start_dt":"2022-11-17","trip_end_dt":"2022-11-19"}, {"trip_start_dt":"2022-11-05","trip_end_dt":"2022-11-09"}]');
 
 //트립수정하기;
-function tripUdt(data) {
+function tripUdt(data, str, end) {
     try {
         udtTripInfoArr = JSON.parse(data);
         startChoiceDt = udtTripInfoArr[0].trip_start_dt;
         endChoiceDt = udtTripInfoArr[0].trip_end_dt;
-
+        // startChoiceDt = str;
+        // endChoiceDt = end;
         renderCalendar();
     } catch (err) {
         return err.message;
@@ -35,7 +36,7 @@ function tripUdt(data) {
 }
 // 트립 수정하기 실행 되었을때
 //
-// tripUdt('[{"trip_start_dt":"2022-10-27","trip_end_dt":"2022-10-31"}]');
+tripUdt('[{"trip_start_dt":"2022-10-09","trip_end_dt":"2022-10-14"}]');
 
 // 달력 그리기
 const renderCalendar = () => {
@@ -104,11 +105,11 @@ const renderCalendar = () => {
                     dates[idx] = `<div class="date this" data-dateinfo="${choiceDt}" onclick="selectChoiceDay(this)">${date}</div>`;
                 }
                 return;
-            } else if (udtTripInfoArr !== null || udtTripInfoArr !== undefined) {
+            } else if (udtTripInfoArr) {
                 let formatStartDt = new Date(startChoiceDt);
                 let formatEndDt = new Date(endChoiceDt);
 
-                if (formatStartDt.getDate() >= date && formatEndDt.getDate() <= date) {
+                if (formatStartDt.getDate() <= date && formatEndDt.getDate() >= date) {
                     dates[idx] = `<div class="date this" data-dateinfo="${choiceDt}" onclick="selectChoiceDay(this)">${date}</div>`;
                 } else if (idx >= firstDateIndex && idx < todayDateIndex && date < formatStartDt.getDate()) {
                     dates[idx] = `<div class="date pastday">${date}</div>`;
@@ -285,6 +286,7 @@ function selectChoiceDay(obj) {
 
 // 수정 트립일정 선택
 function udtChoiceDay_1(obj) {
+    console.log("이미 시작한 트립");
     let formatUdstStartDay = new Date(startChoiceDt);
     let formatUdtEndDay = new Date(obj.dataset.dateinfo);
     formatUdstStartDay.setDate(formatUdstStartDay.getDate() + 30);
@@ -327,13 +329,12 @@ function udtChoiceDay_2(obj) {
     // 중복일자 체크해야함
 
     // 선택한 일자가 첫번째 일자보다 앞서 있는지 확인 한다.
+    console.log("미래트립");
 
-    let strDt = startChoiceDt;
     let endDt = endChoiceDt;
 
     // 역순으로 선택했을때
     if (new Date(startChoiceDt) > new Date(obj.dataset.dateinfo)) {
-        console.log("역순으로 선택했을때 ");
         let formatStrDt = new Date(obj.dataset.dateinfo);
         let formatendDt = new Date(endChoiceDt);
         formatStrDt.setDate(formatStrDt.getDate() + 30);
@@ -356,7 +357,6 @@ function udtChoiceDay_2(obj) {
         return;
     } else {
         // 순서대로 선택했을때
-        console.log("정상적으로 수정");
         let formatStrDt_1 = new Date(startChoiceDt);
         let formatendDt_2 = new Date(obj.dataset.dateinfo);
         formatStrDt_1.setDate(formatStrDt_1.getDate() + 30);
