@@ -397,8 +397,8 @@ function choiceDay(obj) {
             let formatLastDay = startDay;
             formatStartDay.setDate(formatStartDay.getDate() + 30);
             if (formatStartDay.getTime() <= formatLastDay.getTime()) {
-                startChoiceDt = null;
-                endChoiceDt = null;
+                // startChoiceDt = null;
+                // endChoiceDt = null;
                 alert("최대 30일 입니다.");
                 return;
             } else {
@@ -415,9 +415,10 @@ function choiceDay(obj) {
                             new Date(startChoiceDt) <= new Date(getTripInfoArr[i].trip_start_dt) &&
                             new Date(endChoiceDt) >= new Date(getTripInfoArr[i].trip_end_dt)
                         ) {
-                            endChoiceDt = null;
-                            startChoiceDt = null;
+                            // endChoiceDt = null;
+                            // startChoiceDt = null;
                             alert("중복된 일정 입니다.");
+                            return;
                         }
                     }
                 }
@@ -428,7 +429,7 @@ function choiceDay(obj) {
         } else {
             startDay.setDate(startDay.getDate() + 30);
             if (startDay.getTime() <= selectEndDay.getTime()) {
-                startChoiceDt = null;
+                // startChoiceDt = null;
                 endChoiceDt = null;
                 alert("최대 30일 입니다.");
                 return;
@@ -444,7 +445,7 @@ function choiceDay(obj) {
                             new Date(endChoiceDt) >= new Date(getTripInfoArr[i].trip_end_dt)
                         ) {
                             endChoiceDt = null;
-                            startChoiceDt = null;
+                            // startChoiceDt = null;
                             alert("중복된 일정 입니다.");
                             return;
                         }
