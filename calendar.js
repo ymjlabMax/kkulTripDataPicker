@@ -45,7 +45,7 @@ function tripUdt(data, str, end) {
     }
 }
 // 트립 수정하기 실행 되었을때
-// tripUdt('[{"trip_start_dt":"2022-10-26","trip_end_dt":"2022-10-29"}, {"trip_start_dt":"2022-10-13","trip_end_dt":"2022-10-14"}]', "2022-10-13", "2022-10-14");
+tripUdt('[{"trip_start_dt":"2022-10-26","trip_end_dt":"2022-10-29"}, {"trip_start_dt":"2022-10-10","trip_end_dt":"2022-10-14"}]', "2022-10-10", "2022-10-14");
 // tripUdt();
 
 // 달력 그리기
@@ -139,7 +139,7 @@ const renderCalendar = () => {
             if (idx < firstDateIndex || idx > lastDateIndex) {
                 dates[idx] = `<div class="date other">${date}</div>`;
             } else {
-                dates[idx] = `<div class="date this" data-dateInfo="${choiceDt}" onclick="selectChoiceDay(this)" >${date}</div>`;
+                dates[idx] = `<div class="date this" data-dateInfo="${choiceDt}" onclick="selectChoiceDay(this)">${date}</div>`;
             }
             return;
         }
@@ -261,6 +261,14 @@ const renderCalendar = () => {
             }
         }
     }
+    // if (viewMonth === today.getMonth() && viewYear === today.getFullYear()) {
+    //     for (let rawdate of document.querySelectorAll(".today-info")) {
+    //         if (+rawdate.innerText === today.getDate()) {
+    //             rawdate.classList.add("today");
+    //             break;
+    //         }
+    //     }
+    // }
 };
 renderCalendar();
 
