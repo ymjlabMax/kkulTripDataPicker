@@ -43,7 +43,7 @@ function tripUdt(data, str, end) {
     }
 }
 // 트립 수정하기 실행 되었을때
-tripUdt('[{"trip_start_dt":"2022-11-11","trip_end_dt":"2022-11-23"}, {"trip_start_dt":"2022-10-12","trip_end_dt":"2022-10-15"}]', "2022-10-12", "2022-10-15");
+tripUdt('[{"trip_start_dt":"2022-11-11","trip_end_dt":"2022-11-23"}, {"trip_start_dt":"2022-10-10","trip_end_dt":"2022-10-14"}]', "2022-10-10", "2022-10-14");
 // tripUdt();
 
 // 달력 그리기
@@ -299,6 +299,7 @@ function selectChoiceDay(obj) {
 
 // 수정 트립일정 선택
 function udtChoiceDay(obj) {
+    let udtToday_1 = new Date();
     let formatUdstStartDay = new Date(startChoiceDt);
     let formatUdtEndDay = new Date(obj.dataset.dateinfo);
     formatUdstStartDay.setDate(formatUdstStartDay.getDate() + 30);
@@ -309,6 +310,9 @@ function udtChoiceDay(obj) {
             return;
         } else if (formatUdstStartDay.getTime() <= formatUdtEndDay.getTime()) {
             alert("최대 30일 입니다.");
+            return;
+        } else if (formatUdtEndDay.getDate() < udtToday_1.getDate()) {
+            alert("현재 진행 중인 트립기간이 금일보다 적을 수 없습니다.");
             return;
         } else {
             endChoiceDt = obj.dataset.dateinfo;
@@ -326,6 +330,9 @@ function udtChoiceDay(obj) {
                     return;
                 } else if (formatUdstStartDay.getTime() <= formatUdtEndDay.getTime()) {
                     alert("최대 30일 입니다.");
+                    return;
+                } else if (formatUdtEndDay.getDate() < udtToday_1.getDate()) {
+                    alert("현재 진행 중인 트립기간이 금일보다 적을 수 없습니다.");
                     return;
                 } else {
                     endChoiceDt = obj.dataset.dateinfo;
