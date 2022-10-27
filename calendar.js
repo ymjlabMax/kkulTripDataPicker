@@ -35,7 +35,7 @@ function tripUdt(data, str, end) {
             udtEndDt = end;
             renderCalendar();
             return;
-        } else if (str === null || str === undefined) {
+        } else if (str === null || str === undefined || str === "") {
             getTripInfoArr = totalDateArr;
             renderCalendar();
             return;
@@ -45,7 +45,11 @@ function tripUdt(data, str, end) {
     }
 }
 // 트립 수정하기 실행 되었을때
-tripUdt('[{"trip_start_dt":"2022-10-26","trip_end_dt":"2022-10-29"}, {"trip_start_dt":"2022-10-10","trip_end_dt":"2022-10-14"}]', "2022-10-10", "2022-10-14");
+tripUdt(
+    '[{"trip_start_dt":"2022-10-24","trip_end_dt":"2022-10-25"}, {"trip_start_dt":"2022-10-10","trip_end_dt":"2022-10-14"}, {"trip_start_dt":"2022-10-29","trip_end_dt":"2022-10-29"}]',
+    "",
+    ""
+);
 // tripUdt();
 
 // 달력 그리기
