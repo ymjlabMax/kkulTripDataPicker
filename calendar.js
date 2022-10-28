@@ -19,11 +19,11 @@ let udtTripInfoArr;
 // }
 let udtStrDt;
 let udtEndDt;
-
 //트립수정하기;
 function tripUdt(data, str, end) {
     try {
         let totalDateArr = JSON.parse(data);
+
         if (str) {
             let getArr = totalDateArr.filter((date) => date.trip_start_dt !== str && date.trip_end_dt !== end);
             let udtArr = totalDateArr.filter((date) => date.trip_start_dt === str && date.trip_end_dt === end);
@@ -34,8 +34,7 @@ function tripUdt(data, str, end) {
             udtStrDt = str;
             udtEndDt = end;
             renderCalendar();
-            return;
-        } else if (str === null || str === undefined || str === "") {
+        } else if (str === null || str === undefined) {
             getTripInfoArr = totalDateArr;
             renderCalendar();
             return;
@@ -45,12 +44,8 @@ function tripUdt(data, str, end) {
     }
 }
 // 트립 수정하기 실행 되었을때
-tripUdt(
-    '[{"trip_start_dt":"2022-10-24","trip_end_dt":"2022-10-25"}, {"trip_start_dt":"2022-10-10","trip_end_dt":"2022-10-14"}, {"trip_start_dt":"2022-10-29","trip_end_dt":"2022-10-29"}]',
-    "",
-    ""
-);
-// tripUdt();
+// tripUdt('[{"trip_start_dt":"2022-10-24","trip_end_dt":"2022-10-25"}]');
+tripUdt();
 
 // 달력 그리기
 const renderCalendar = () => {
@@ -122,9 +117,10 @@ const renderCalendar = () => {
             } else if (udtTripInfoArr) {
                 let formatStartDt = new Date(udtStrDt);
                 let formatEndDt = new Date(udtEndDt);
+
                 if (formatStartDt <= new Date(choiceDt) && new Date(choiceDt) <= formatEndDt) {
                     dates[idx] = `<div class="date this" data-dateinfo="${choiceDt}" onclick="selectChoiceDay(this)">${date}</div>`;
-                } else if (idx >= firstDateIndex && idx < todayDateIndex && date < formatStartDt.getDate()) {
+                } else if (idx >= firstDateIndex && idx < todayDateIndex && new Date(choiceDt) < formatStartDt) {
                     dates[idx] = `<div class="date pastday">${date}</div>`;
                 } else if (idx < firstDateIndex || idx > lastDateIndex) {
                     dates[idx] = `<div class="date other">${date}</div>`;
@@ -140,12 +136,29 @@ const renderCalendar = () => {
             let choiceDt = String(viewYear);
             choiceDt += viewMonth < 9 ? "-0" + String(viewMonth + 1) : "-" + String(viewMonth + 1);
             choiceDt += date < 10 ? "-0" + String(date) : "-" + String(date);
-            if (idx < firstDateIndex || idx > lastDateIndex) {
-                dates[idx] = `<div class="date other">${date}</div>`;
-            } else {
-                dates[idx] = `<div class="date this" data-dateInfo="${choiceDt}" onclick="selectChoiceDay(this)">${date}</div>`;
+
+            if (udtTripInfoArr === null || udtTripInfoArr === undefined) {
+                if (idx < firstDateIndex || idx > lastDateIndex) {
+                    dates[idx] = `<div class="date other">${date}</div>`;
+                } else {
+                    dates[idx] = `<div class="date this" data-dateInfo="${choiceDt}" onclick="selectChoiceDay(this)">${date}</div>`;
+                }
+                return;
+            } else if (udtTripInfoArr) {
+                let formatStartDt = new Date(udtStrDt);
+                let formatEndDt = new Date(udtEndDt);
+
+                if (formatStartDt <= new Date(choiceDt) && new Date(choiceDt) <= formatEndDt) {
+                    dates[idx] = `<div class="date this" data-dateinfo="${choiceDt}" onclick="selectChoiceDay(this)">${date}</div>`;
+                } else if (idx >= firstDateIndex && idx < todayDateIndex && new Date(choiceDt) < formatStartDt) {
+                    dates[idx] = `<div class="date pastday">${date}</div>`;
+                } else if (idx < firstDateIndex || idx > lastDateIndex) {
+                    dates[idx] = `<div class="date other">${date}</div>`;
+                } else {
+                    dates[idx] = `<div class="date this" data-dateinfo="${choiceDt}" onclick="selectChoiceDay(this)">${date}</div>`;
+                }
+                return;
             }
-            return;
         }
 
         // 과거해 조건문
@@ -299,7 +312,7 @@ function selectChoiceDay(obj) {
     let udtToday = new Date();
 
     if (udtTripInfoArr) {
-        if (new Date(udtStrDt).getDate() <= new Date(udtToday).getDate()) {
+        if (new Date(udtStrDt) < new Date(udtToday)) {
             udtChoiceDay(obj);
             return;
         } else {
@@ -325,7 +338,7 @@ function udtChoiceDay(obj) {
         } else if (formatUdstStartDay.getTime() <= formatUdtEndDay.getTime()) {
             alert("최대 30일 입니다.");
             return;
-        } else if (formatUdtEndDay.getDate() < udtToday_1.getDate()) {
+        } else if (formatUdtEndDay < udtToday_1) {
             alert("현재 진행 중인 트립기간이 금일보다 적을 수 없습니다.");
             return;
         } else {
@@ -345,7 +358,7 @@ function udtChoiceDay(obj) {
                 } else if (formatUdstStartDay.getTime() <= formatUdtEndDay.getTime()) {
                     alert("최대 30일 입니다.");
                     return;
-                } else if (formatUdtEndDay.getDate() < udtToday_1.getDate()) {
+                } else if (formatUdtEndDay < udtToday_1) {
                     alert("현재 진행 중인 트립기간이 금일보다 적을 수 없습니다.");
                     return;
                 } else {
