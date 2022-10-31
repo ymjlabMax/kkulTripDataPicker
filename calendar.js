@@ -36,6 +36,7 @@ function tripUdt(data, str, end) {
             renderCalendar();
         } else if (str === null || str === undefined) {
             getTripInfoArr = totalDateArr;
+            udtTripInfoArr = null;
             renderCalendar();
             return;
         }
@@ -44,8 +45,7 @@ function tripUdt(data, str, end) {
     }
 }
 // 트립 수정하기 실행 되었을때
-// tripUdt('[{"trip_start_dt":"2022-10-24","trip_end_dt":"2022-10-25"}]');
-tripUdt();
+tripUdt('[{"trip_start_dt":"2022-10-24","trip_end_dt":"2022-11-01"}]', "2022-10-24", "2022-11-01");
 
 // 달력 그리기
 const renderCalendar = () => {
@@ -291,13 +291,13 @@ renderCalendar();
 
 // 지난월 이동
 const prevMonth = () => {
-    date.setMonth(date.getMonth() - 1);
+    date.setMonth(date.getMonth() - 1), 1;
     renderCalendar();
 };
 
 // 다음월 이동
 const nextMonth = () => {
-    date.setMonth(date.getMonth() + 1);
+    date.setMonth(date.getMonth() + 1, 1);
     renderCalendar();
 };
 
@@ -310,7 +310,6 @@ const goToday = () => {
 // 날짜 선택 또는 수정하기 함수
 function selectChoiceDay(obj) {
     let udtToday = new Date();
-
     if (udtTripInfoArr) {
         if (new Date(udtStrDt) < new Date(udtToday)) {
             udtChoiceDay(obj);
@@ -331,14 +330,14 @@ function udtChoiceDay(obj) {
     let formatUdtEndDay = new Date(obj.dataset.dateinfo);
     formatUdstStartDay.setDate(formatUdstStartDay.getDate() + 30);
 
-    if (getTripInfoArr === undefined || getTripInfoArr === null) {
+    if (getTripInfoArr === undefined || getTripInfoArr === null || getTripInfoArr.length === 0) {
         if (new Date(startChoiceDt) > new Date(obj.dataset.dateinfo)) {
             alert("이미 시작된 트립은 시작일은 수정 불가 입니다.");
             return;
         } else if (formatUdstStartDay.getTime() <= formatUdtEndDay.getTime()) {
             alert("최대 30일 입니다.");
             return;
-        } else if (formatUdtEndDay < udtToday_1) {
+        } else if (formatUdtEndDay.getDate() < udtToday_1.getDate() && formatUdtEndDay < udtToday_1) {
             alert("현재 진행 중인 트립기간이 금일보다 적을 수 없습니다.");
             return;
         } else {
@@ -362,6 +361,7 @@ function udtChoiceDay(obj) {
                     alert("현재 진행 중인 트립기간이 금일보다 적을 수 없습니다.");
                     return;
                 } else {
+                    console.log("1111111111111긴급");
                     endChoiceDt = obj.dataset.dateinfo;
                     renderCalendar();
                     return;
