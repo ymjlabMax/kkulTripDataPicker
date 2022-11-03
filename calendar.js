@@ -45,7 +45,11 @@ function tripUdt(data, str, end) {
     }
 }
 // 트립 수정하기 실행 되었을때
-tripUdt('[{"trip_start_dt":"2022-10-24","trip_end_dt":"2022-11-01"}]', "2022-10-24", "2022-11-01");
+// tripUdt(
+//     '[{"trip_start_dt":"2022-10-24","trip_end_dt":"2022-11-01"}, {"trip_start_dt":"2022-11-23","trip_end_dt":"2022-11-25"}, {"trip_start_dt":"2022-12-05","trip_end_dt":"2022-12-09"}]',
+//     "2022-11-23",
+//     "2022-11-25"
+// );
 
 // 달력 그리기
 const renderCalendar = () => {
@@ -357,7 +361,7 @@ function udtChoiceDay(obj) {
                 } else if (formatUdstStartDay.getTime() <= formatUdtEndDay.getTime()) {
                     alert("최대 30일 입니다.");
                     return;
-                } else if (formatUdtEndDay < udtToday_1) {
+                } else if (formatUdtEndDay.getDate() < udtToday_1.getDate() && formatUdtEndDay < udtToday_1) {
                     alert("현재 진행 중인 트립기간이 금일보다 적을 수 없습니다.");
                     return;
                 } else {
